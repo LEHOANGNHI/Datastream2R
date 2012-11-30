@@ -1,8 +1,4 @@
-#
-#
-#  These are a series of functions which provide access in R to the 
-#  Datastream DataWorks Enterprise XML server
-#
+
 #  Functions are:
 #     getDWERequestVersion - returns the version of this package
 #     getDatastream - returns a connection to the DWE server and generate S3 objects
@@ -25,12 +21,16 @@
 # v0.89
 # getTimeSeriesListRequest can now handle lower case instrument codes
 
+#'\code{getDWERequestVersion} returns the version number of the package
 getDWERequestVersion <- function(){return("Version 0.89, dated 28 Nov 2012")}
 
 
 ##############################################################################################
 
-
+#'\code{getDataStream} initialises the connection with the Datatream DWE server
+#'@param dweURLwsdl The URL of the server
+#'@param User The username for Datastream.  If not provided it will use the username from the windows registry 
+#'@param Pass The password for Datastream.  Also sourced from Registry
 getDataStream <- function(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/Enterprise/1.0/webServiceClient.asmx?WSDL",
                           User=as.character(tcl("registry","get",
                                                 "HKEY_CURRENT_USER\\Software\\Datastream\\DSAccess\\Login1",
@@ -54,8 +54,18 @@ getDataStream <- function(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/E
 
 
 ##############################################################################################
-#
-#
+#'\code{listRequest} Function that returns a the value of Expression for the instrument list in DSCode from Datastream
+#' parameters are 
+#'@param dwei - A Datastream Client Interface object created with getDataStream
+#'@param  DSCode - the constituent list for the request eg LDJSTOXX
+#'@param  Expression - the data to return eg MNEM or NAME
+#'@param   startDate - the start date of the timeseries
+#'@param  endDate - the end date of the timeseries
+#'@param  frequency - the frequency of the request
+#'@param   verbose - whether to give messages during the request
+#'
+#'@return   returns an array of the requested information
+
 listRequest <- function (dwei=getDataStream(), 
                          DSCode,
                          Expression="",
@@ -63,22 +73,11 @@ listRequest <- function (dwei=getDataStream(),
                          endDate=Sys.Date(),
                          frequency="D",
                          verbose=FALSE) {
-   # Function that returns a the value of Expression for the instrument list in DSCode from Datastream
-   # parameters are 
-   #    dwei - A Datastream Client Interface object created with getDataStream
-   #    DSCode - the constituent list for the request eg LDJSTOXX
-   #    Expression - the data to return eg MNEM or NAME
-   #    startDate - the start date of the timeseries
-   #    endDate - the end date of the timeseries
-   #    frequency - the frequency of the request
-   #    verbose - whether to give messages during the request
-   #
-   #    returns an array of the requested information
+
    #
    #    TODO:  
    #      1) Error checking of invalid input parameters
    #      2) Enforce type of parameters
-   ################################################################################
    
    #Create the request objects
    #first replace the '~' character with '~~'
@@ -109,6 +108,20 @@ listRequest <- function (dwei=getDataStream(),
 
 
 ##############################################################################################
+#'\code{timeSeriesListRequest} Function that returns a timeseries from Datastream constituent list
+#' parameters are 
+#'@param   dwei - A Datastream Client Interface object created with getDataStream
+#'@param   DSCode - the constituent list requested eg 'LFTSE100'
+#'@param    Instrument - the expression to return for each member of constituent list
+#'@param    startDate - the start date of the timeseries
+#'@param    endDate - the end date of the timeseries
+#'@param    frequency - the frequency of the request
+#'@param    verbose - whether to give messages during the request
+#'
+#'@return   whether the request has been successful
+#'    , but also
+#'    in sStockList: a list a two element vector of the displayname and symbol for each timeseries
+#'    in aTimeseries: a list of class xts with the requested timeseries information
 
 timeSeriesListRequest <- function (dwei=getDataStream(), 
                                    DSCode,
@@ -119,23 +132,7 @@ timeSeriesListRequest <- function (dwei=getDataStream(),
                                    sStockList,
                                    aTimeSeries,
                                    verbose=FALSE) {
-   # Function that returns a timeseries from Datastream constituent list
-   # parameters are 
-   #    dwei - A Datastream Client Interface object created with getDataStream
-   #    DSCode - the constituent list requested eg 'LFTSE100'
-   #    Instrument - the expression to return for each member of constituent list
-   #    startDate - the start date of the timeseries
-   #    endDate - the end date of the timeseries
-   #    frequency - the frequency of the request
-   #    verbose - whether to give messages during the request
-   #
-   # returns:
-   #    whether the request has been successful
-   #    , but also
-   #    in sStockList: a list a two element vector of the displayname and symbol for each timeseries
-   #    in aTimeseries: a list of class xts with the requested timeseries information
-   #
-   ################################################################################
+
    
    constituents <- listRequest(dwei=dwei,
                                DSCode=DSCode,
@@ -160,7 +157,20 @@ timeSeriesListRequest <- function (dwei=getDataStream(),
 
 
 ###############################################################################################
-#
+#'\code{timeSeriesRequest} Function that returns a timeseries from Datastream
+#' parameters are 
+#'@param    dwei - A Datastream Client Interface object created with getDataStream
+#'@param    DSCodes - one or more codes to return, eg "MKS" or c("MKS","SAB")
+#'@param    Instrument - the instrument or expression to return eg PCH#(XXXX,1M) 
+#'@param    startDate - the start date of the timeseries
+#'@param    endDate - the end date of the timeseries
+#'@param    frequency - the frequency of the request
+#'@param    verbose - whether to give messages during the request
+#'
+
+#'@return    whether the request has been successful
+#'    in sStockList: a list a two element vector of the displayname and symbol for each timeseries
+#'    in aTimeseries: a list of class xts with the requested timeseries information
 timeSeriesRequest <- function (dwei=getDataStream(), 
                                DSCodes="",
                                Instrument="",
@@ -170,23 +180,7 @@ timeSeriesRequest <- function (dwei=getDataStream(),
                                sStockList,
                                aTimeSeries,
                                verbose=FALSE) {
-   # Function that returns a timeseries from Datastream
-   # parameters are 
-   #    dwei - A Datastream Client Interface object created with getDataStream
-   #    DSCodes - one or more codes to return, eg "MKS" or c("MKS","SAB")
-   #    Instrument - the instrument or expression to return eg PCH#(XXXX,1M) 
-   #    startDate - the start date of the timeseries
-   #    endDate - the end date of the timeseries
-   #    frequency - the frequency of the request
-   #    verbose - whether to give messages during the request
-   #
-   # returns:
-   #    whether the request has been successful
-   #    in sStockList: a list a two element vector of the displayname and symbol for each timeseries
-   #    in aTimeseries: a list of class xts with the requested timeseries information
-   #
-   ################################################################################
-   #
+
    # Check the parameters are valid
    #   TODO: check if dwei is valid
    # if(class(dwei)=="SOAPClientInterface") { return(FALSE) }
@@ -426,6 +420,7 @@ timeSeriesRequest <- function (dwei=getDataStream(),
    
 }
 
+#'\code{getNodesValue} internal helper function
 getNodesValue <-function(node) {
    if(! is.null(node)) {
       return(xmlSApply(node,xmlValue))
@@ -434,6 +429,7 @@ getNodesValue <-function(node) {
    {return(NA)}
 }
 
+#'\code{getCodeFromInstrument} internal helper function
 getCodeFromInstrument <- function(instrument = "",key) {
    
    return(key$code[!is.na(match(key$instruments,instrument))*seq(along=key$instruments)])

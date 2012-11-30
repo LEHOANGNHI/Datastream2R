@@ -1,10 +1,9 @@
-\name{Datastream2R-package}
-\alias{Datastream2R-package}
+\name{Datastream2R}
+\alias{Datastream2R}
 \alias{Datastream2R}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+Access to the Thomson Reuters Datastream
 }
 \description{
 More about what it does (maybe more than one line)
@@ -14,22 +13,21 @@ More about what it does (maybe more than one line)
 \tabular{ll}{
 Package: \tab Datastream2R\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
+Version: \tab 0.1\cr
 Date: \tab 2012-11-30\cr
-License: \tab What license is it under?\cr
+License: \tab GPL 2.0\cr
 }
 ~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-Who wrote it
+Charles Cara
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Maintainer: Charles Cara <charlesc@absolute-strategy.com>
 ~~ The author and/or maintainer of the package ~~
 }
 \references{
 ~~ Literature or other references for background information ~~
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
 \keyword{ package }
 \seealso{
 ~~ Optional links to other man pages, e.g. ~~
