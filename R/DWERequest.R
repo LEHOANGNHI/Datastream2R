@@ -20,9 +20,11 @@
 # Made a default that it requests a Datastream SOAP if not provided
 # v0.89
 # getTimeSeriesListRequest can now handle lower case instrument codes
+# v0.90
+# Fixed bug for when no data returned from Datastream Return code 2 for H:DE(DY)
 
 #'\code{getDWERequestVersion} returns the version number of the package
-getDWERequestVersion <- function(){return("Version 0.89, dated 28 Nov 2012")}
+getDWERequestVersion <- function(){return("Version 0.90, dated 12 Dec 2012")}
 
 
 ##############################################################################################
@@ -343,7 +345,6 @@ timeSeriesRequest <- function (dwei=getDataStream(),
             seriesNames[[code]] <- code     
             rm(instrument)
             if(verbose==TRUE){cat("No data returned for ", code, "\n")}
-            rm(code)
             # Create an empty xts object with just the startDate.  The missing dates can be merged
             # in 
             t<-xts(NA,startDate)
