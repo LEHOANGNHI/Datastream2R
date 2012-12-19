@@ -50,7 +50,7 @@ getDataStream <- function(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/E
    
    dweObject <- suppressWarnings(genSOAPClientInterface(
       def= processWSDL(dweURLwsdl, verbose=FALSE)
-      ,verbose=FALSE))
+      ,verbose=FALSE,force=TRUE))
    return(c(dwe=dweObject,User=User,Pass=Pass))
 }
 
@@ -94,6 +94,11 @@ listRequest <- function (dwei=getDataStream(),
    
    # Make the request from Datastream DWE
    dweObject <- dwei$dwe
+   #SSOAP has been improved in 0.9.0 to take named parameters
+#    resultsXML <- dweObject@functions$RequestRecordAsXml(User=ud,
+#                                                         Request=rd,
+#                                                         RequestFlags=0L,
+#                                                          .convert = FALSE)
    resultsXML <- dweObject@functions$RequestRecordAsXml(parameters = urrf, .convert = FALSE)
    
    # Process the response
@@ -265,6 +270,13 @@ timeSeriesRequest <- function (dwei=getDataStream(),
    # Make the request from Datastream DWE
    if(verbose==TRUE){cat("Make request\n")}
    dweObject <- dwei$dwe
+   
+   #SSOAP 0.9.0 now takes named parameters
+#    response <- dweObject@functions$RequestRecordsAsXml(User=ud,
+#                                                        Request=rd,
+#                                                        RequestFlags=0L,
+#                                                        .convert = FALSE)
+   
    response <- dweObject@functions$RequestRecordsAsXml(parameters = urrf, .convert = FALSE)
    if(verbose==TRUE){cat("Get message content\n")}
    resultsXML<-response$content
