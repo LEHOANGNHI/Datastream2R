@@ -22,9 +22,10 @@
 # getTimeSeriesListRequest can now handle lower case instrument codes
 # v0.90
 # Fixed bug for when no data returned from Datastream Return code 2 for H:DE(DY)
+# Experimental version that does not have Tcl in it
 
 #'\code{getDWERequestVersion} returns the version number of the package
-getDWERequestVersion <- function(){return("Version 0.90, dated 12 Dec 2012")}
+getDWERequestVersion <- function(){return("Version 0.90, dated 12 Dec 2012 - No Tcl/Tk")}
 
 
 ##############################################################################################
@@ -34,19 +35,14 @@ getDWERequestVersion <- function(){return("Version 0.90, dated 12 Dec 2012")}
 #'@param User The username for Datastream.  If not provided it will use the username from the windows registry 
 #'@param Pass The password for Datastream.  Also sourced from Registry
 getDataStream <- function(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/Enterprise/1.0/webServiceClient.asmx?WSDL",
-                          User=as.character(tcl("registry","get",
-                                                "HKEY_CURRENT_USER\\Software\\Datastream\\DSAccess\\Login1",
-                                                "USERID")),
-                          Pass=as.character(tcl("registry","get",
-                                                "HKEY_CURRENT_USER\\Software\\Datastream\\DSAccess\\Login1",
-                                                "PASSWORD"))
+                          User=as.character("USERNAME"),
+                          Pass=as.character("PASSWORD")
 ){
    require(SSOAP,quietly=TRUE)
    require(XMLSchema,quietly=TRUE)
    require(XML,quietly=TRUE)
    require(zoo,quietly=TRUE)
    require(xts,quietly=TRUE)
-   require(tcltk,quietly=TRUE)
    
    dweObject <- suppressWarnings(genSOAPClientInterface(
       def= processWSDL(dweURLwsdl, verbose=FALSE)
