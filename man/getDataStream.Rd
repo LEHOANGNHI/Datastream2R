@@ -3,8 +3,8 @@
 \title{\code{getDataStream} initialises the connection with the Datatream DWE server}
 \usage{
   getDataStream(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/Enterprise/1.0/webServiceClient.asmx?WSDL",
-    User = as.character(tcl("registry", "get", "HKEY_CURRENT_USER\\Software\\Datastream\\DSAccess\\Login1", "USERID")),
-    Pass = as.character(tcl("registry", "get", "HKEY_CURRENT_USER\\Software\\Datastream\\DSAccess\\Login1", "PASSWORD")))
+    User = as.character("USERNAME"),
+    Pass = as.character("PASSWORD"))
 }
 \arguments{
   \item{dweURLwsdl}{The URL of the server}

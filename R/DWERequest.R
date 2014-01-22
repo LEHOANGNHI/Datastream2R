@@ -301,15 +301,14 @@ timeSeriesRequest <- function (dwei=getDataStream(),
          
          instrument <- xmlValue(x[["Instrument"]])
          
-         code <- getCodeFromInstrument(instrument,instrumentCodeMap)
-
+         code <- getCodeFromInstrument(instrument,instrumentCodeMap)[1]
+         
          
          if(verbose==TRUE){cat(" and processing ", instrument, " with code ", code,"\n")}
          if(status==0){
             value <- xmlValue(x[["Fields"]][["DISPNAME"]])
             
             seriesNames[[code]] <- value
-            
             
             rm(instrument)
             rm(value)

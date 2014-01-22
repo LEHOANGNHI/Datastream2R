@@ -1,9 +1,9 @@
 Package: Datastream2R
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: Allows access to Datastream data from R
+Version: 1.0.1
 Date: 2012-11-30
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: Charles Cara
+Maintainer: Charles Cara <charlesc@absolute-strategy.com>
+Description: Replicates the Excel data request functions in R
+License: GNPL
