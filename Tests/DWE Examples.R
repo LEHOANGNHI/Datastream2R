@@ -2,7 +2,7 @@
 #At some point this code be put into the documentation
 #
 
-dwei<-getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 timeSeriesRequest(dwei=dwei, 
                   DSCodes=c("LN#(S&PCOMZ(RI)/LAG#(S&PCOMZ(RI),1M))*1.0000"),
                   startDate=as.Date("1975-01-31"),

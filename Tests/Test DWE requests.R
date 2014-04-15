@@ -4,7 +4,7 @@
 #
 #
 ##############################################################################################
-dwei <- getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 
 stock <- c("MKS")
 datatype = "MV"
@@ -18,7 +18,7 @@ plot(stpr, main = names(stn[1]))
 #
 #
 ##############################################################################################
-dwei <- getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 stock <- c("MKS","RIO")
 datatype = "MV"
 startDate <- as.Date("31/12/2011", "%d/%m/%Y")
@@ -32,7 +32,7 @@ plot(stpr, ylab = stn[[1]][1])
 #
 #
 #######################################################################################
-dwei <- getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 Instrument <- c("PCH#(USCONPRCF,12M)")
 
 startDate <- as.Date("31/12/1960", "%d/%m/%Y")
@@ -47,7 +47,7 @@ plot(stpr[,1], main = names(stn[1]))
 #
 #
 #########################################################################################
-dwei <- getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 stockList <- "LFTSE100"
 sCode <- "MNEM"
 b <- listRequest(dwei = dwei, DSCode = stockList, 
@@ -58,7 +58,7 @@ print(b)
 #
 #
 ##############################################################################
-dwei <- getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 startDate <- as.Date("31/12/2011", "%d/%m/%Y")
 endData <- Sys.Date()
 stockList <- c("SAB", "RIO", "MKS")
@@ -72,7 +72,7 @@ plot(stpr[,2], main = names(stn[2]))
 #
 #
 ####################################################################################
-dwei <- getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 startDate <- as.Date("31/12/2011", "%d/%m/%Y")
 endData <- Sys.Date()
 stockList <- "LFTSE100"
@@ -86,7 +86,7 @@ plot(stpr[,2], main = names(stn[2]))
 #
 #
 ####################################################################################
-dwei <- getDataStream()
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
 startDate <- as.Date("31/12/1990", "%d/%m/%Y")
 endData <- Sys.Date()
 stockList <- "LS&PCOMP"
@@ -111,3 +111,32 @@ timeSeriesRequest(dwei=dwei,
                   sStockList=sName,
                   aTimeSeries = aTS,
                   verbose=TRUE)
+
+#############################################################
+# Test of requesting the same thing twice
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
+
+stock <- c("MKS", "MKS")
+datatype = "MV"
+startDate <- as.Date("31/12/2011", "%d/%m/%Y")
+endData <- Sys.Date()
+#endDate <- as.Date('24/01/2012', '%d/%m/%Y')
+
+timeSeriesRequest(dwei = dwei, DSCode = stock, 
+                  Instrument = datatype, startDate = startDate, sStockList = stn, aTimeSeries = stpr, verbose=TRUE)
+
+
+#############################################################
+# Test of requesting the same thing twice
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
+
+stock <- c("MKS", "D:BASF")
+datatype = "MV"
+startDate <- as.Date("31/12/2011", "%d/%m/%Y")
+endData <- Sys.Date()
+#endDate <- as.Date('24/01/2012', '%d/%m/%Y')
+
+timeSeriesRequest(dwei = dwei, DSCode = stock, 
+                  Instrument = datatype, startDate = startDate, sStockList = stn, aTimeSeries = stpr)
+
+

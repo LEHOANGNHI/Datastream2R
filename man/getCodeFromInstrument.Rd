@@ -2,9 +2,9 @@
 \alias{getCodeFromInstrument}
 \title{\code{getCodeFromInstrument} internal helper function}
 \usage{
-  getCodeFromInstrument(instrument = "", key)
+getCodeFromInstrument(instrument = "", key)
 }
 \description{
-  \code{getCodeFromInstrument} internal helper function
+\code{getCodeFromInstrument} internal helper function
 }
 

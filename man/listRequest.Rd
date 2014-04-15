@@ -3,9 +3,8 @@
 \title{\code{listRequest} Function that returns a the value of Expression for the instrument list in DSCode from Datastream
 parameters are}
 \usage{
-  listRequest(dwei = getDataStream(), DSCode,
-    Expression = "", startDate, endDate = Sys.Date(),
-    frequency = "D", verbose = FALSE)
+listRequest(dwei = getDataStream(), DSCode, Expression = "", startDate,
+  endDate = Sys.Date(), frequency = "D", verbose = FALSE)
 }
 \arguments{
   \item{dwei}{- A Datastream Client Interface object
@@ -26,11 +25,11 @@ parameters are}
   request}
 }
 \value{
-  returns an array of the requested information
+returns an array of the requested information
 }
 \description{
-  \code{listRequest} Function that returns a the value of
-  Expression for the instrument list in DSCode from
-  Datastream parameters are
+\code{listRequest} Function that returns a the value of
+Expression for the instrument list in DSCode from
+Datastream parameters are
 }
 

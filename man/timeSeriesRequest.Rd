@@ -3,10 +3,9 @@
 \title{\code{timeSeriesRequest} Function that returns a timeseries from Datastream
 parameters are}
 \usage{
-  timeSeriesRequest(dwei = getDataStream(), DSCodes = "",
-    Instrument = "", startDate = Sys.Date(),
-    endDate = Sys.Date(), frequency = "D", sStockList,
-    aTimeSeries, verbose = FALSE)
+timeSeriesRequest(dwei = getDataStream(), DSCodes = "", Instrument = "",
+  startDate = Sys.Date(), endDate = Sys.Date(), frequency = "D",
+  sStockList, aTimeSeries, verbose = FALSE)
 }
 \arguments{
   \item{dwei}{- A Datastream Client Interface object
@@ -28,13 +27,13 @@ parameters are}
   request}
 }
 \value{
-  whether the request has been successful in sStockList: a
-  list a two element vector of the displayname and symbol
-  for each timeseries in aTimeseries: a list of class xts
-  with the requested timeseries information
+whether the request has been successful in sStockList: a
+list a two element vector of the displayname and symbol for
+each timeseries in aTimeseries: a list of class xts with
+the requested timeseries information
 }
 \description{
-  \code{timeSeriesRequest} Function that returns a
-  timeseries from Datastream parameters are
+\code{timeSeriesRequest} Function that returns a timeseries
+from Datastream parameters are
 }
 
