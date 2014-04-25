@@ -8,41 +8,30 @@
 #     timeSeriesRequest - Function that returns a series of timeseries for a list of instruments
 #
 #
-#
-#Release history
-#
-# v0.86
-# Added a default option that the username and password are taken from the Windows Registry
-# v0.87
-# Fixed bug for when no data is returned from Datastream
-# v0.88
-# Tidied up code and submitted it to GitHub
-# Made a default that it requests a Datastream SOAP if not provided
-# v0.89
-# getTimeSeriesListRequest can now handle lower case instrument codes
-# v0.90
-# Fixed bug for when no data returned from Datastream Return code 2 for H:DE(DY)
-# Experimental version that does not have Tcl in it
-
-#'\code{getDWERequestVersion} returns the version number of the package
-getDWERequestVersion <- function(){return("Version 0.90, dated 12 Dec 2012 - No Tcl/Tk")}
 
 
 ##############################################################################################
+#' 
+#'  
+#' @title Initialise connection with Datastream DWE server
 
-#'\code{getDataStream} initialises the connection with the Datatream DWE server
-#'@param dweURLwsdl The URL of the server
-#'@param User The username for Datastream.  If not provided it will use the username from the windows registry 
-#'@param Pass The password for Datastream.  Also sourced from Registry
+#' @details \code{getDataStream} initialises the connection with the Datastream DWE server
+#' @param dweURLwsdl The URL of the server
+#' @param User The username for Datastream.  If not provided it will use the username from the windows registry 
+#' @param Pass The password for Datastream.  Also sourced from Registry
+#' @return a DWE connection object
+#' @export
+#' @import SSOAP
+#' @import XMLSchema
+#' @import XML
+#' @import zoo
+#' @import xts
+#'
 getDataStream <- function(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/Enterprise/1.0/webServiceClient.asmx?WSDL",
                           User=as.character("USERNAME"),
                           Pass=as.character("PASSWORD")
 ){
-   require(SSOAP,quietly=TRUE)
-   require(XMLSchema,quietly=TRUE)
-   require(XML,quietly=TRUE)
-   require(zoo,quietly=TRUE)
-   require(xts,quietly=TRUE)
+
    
    dweObject <- suppressWarnings(genSOAPClientInterface(
       def= processWSDL(dweURLwsdl, verbose=FALSE)
@@ -52,8 +41,12 @@ getDataStream <- function(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/E
 
 
 ##############################################################################################
+#'
+#'
+#'@title Make a list request for static data
+#'
 #'\code{listRequest} Function that returns a the value of Expression for the instrument list in DSCode from Datastream
-#' parameters are 
+#'
 #'@param dwei - A Datastream Client Interface object created with getDataStream
 #'@param  DSCode - the constituent list for the request eg LDJSTOXX
 #'@param  Expression - the data to return eg MNEM or NAME
@@ -63,6 +56,13 @@ getDataStream <- function(dweURLwsdl = "http://dataworks.thomson.com/Dataworks/E
 #'@param   verbose - whether to give messages during the request
 #'
 #'@return   returns an array of the requested information
+#'@export
+#'
+#' @import SSOAP
+#' @import XMLSchema
+#' @import XML
+#' @import zoo
+#' @import xts
 
 listRequest <- function (dwei=getDataStream(), 
                          DSCode,
@@ -90,11 +90,7 @@ listRequest <- function (dwei=getDataStream(),
    
    # Make the request from Datastream DWE
    dweObject <- dwei$dwe
-   #SSOAP has been improved in 0.9.0 to take named parameters
-#    resultsXML <- dweObject@functions$RequestRecordAsXml(User=ud,
-#                                                         Request=rd,
-#                                                         RequestFlags=0L,
-#                                                          .convert = FALSE)
+
    resultsXML <- dweObject@functions$RequestRecordAsXml(parameters = urrf, .convert = FALSE)
    
    # Process the response
@@ -111,6 +107,111 @@ listRequest <- function (dwei=getDataStream(),
 
 
 ##############################################################################################
+#' @title make a static request
+#' 
+#'\code{staticRequest} Function that returns a the value of Expression for the array of instruments in DSCode from Datastream
+#' parameters are 
+#' 
+#'@param dwei - A Datastream Client Interface object created with getDataStream
+#'@param  DSCode - an array of instruments eg c("RIO","MKS")
+#'@param  Expression - the data to return eg MNEM or NAME
+#'@param   startDate - the start date of the timeseries
+#'@param  endDate - the end date of the timeseries
+#'@param  frequency - the frequency of the request
+#'@param   verbose - whether to give messages during the request
+#'
+#'@return   returns an array of the requested information
+#'@export
+
+staticRequest <- function (dwei=getDataStream(), 
+                         DSCode,
+                         Expression="",
+                         endDate=Sys.Date(),
+                         frequency="D",
+                         verbose=FALSE) {
+   
+
+
+   #Create the request objects
+   #first replace the '~' character with '~~'
+   DSCode<-gsub("~","~~",DSCode)
+   Expression<-gsub("~","~~",Expression)
+   
+   # Create the request string
+   getRecord <- function(x, Expression) {paste0(toupper(x),"~REP~=",toupper(Expression),
+                                  "~",format(endDate,format="%Y-%m-%d"),
+                                  "~",format(endDate,format="%Y-%m-%d"),
+                                  "~AA~NA=NaN~#",dwei$User)}
+   
+   instrumentCode <- lapply(DSCode,FUN=getRecord,Expression)
+   
+   if(verbose==TRUE){cat(paste("Request string is",instrumentCode, "\n"))}  
+   
+   ud <-new("UserData", Username = paste("DS:",dwei$User,sep=""), Password = dwei$Pass)
+   rd <- lapply(instrumentCode,function(x) new("RequestData", 
+                                               Source = "Datastream", 
+                                               Instrument = x,
+                                               Fields = as(c(""), "ArrayOfString")))
+
+   urrf <- new("User.Requests.RequestFlags", 
+               User = ud, 
+               Requests = new("ArrayOfRequestData",rd), 
+               RequestFlags = 0L)
+   
+   
+   # Make the request from Datastream DWE
+   dweObject <- dwei$dwe
+   
+   #SSOAP has been improved in 0.9.0 to take named parameters
+
+   resultsXML <- dweObject@functions$RequestRecordsAsXml(parameters = urrf, .convert = FALSE)
+   
+   # Process the response
+   docXML = xmlRoot(xmlTreeParse(resultsXML$content))
+
+   recordsXML <- docXML[["Body"]][["RequestRecordsAsXmlResponse"]][["RequestRecordsAsXmlResult"]][["Records"]]
+   # Get list of the success status
+   statusCode <- sapply(xmlChildren(recordsXML),FUN=function(node) as.numeric(xmlValue(node[["StatusCode"]])))
+   statusMessage <- sapply(xmlChildren(recordsXML),FUN=function(node) xmlValue(node[["StatusMessage"]]))   
+
+   if(sum(statusCode) != 0){
+      return(data.frame(DSCode,statusMessage))
+   }
+
+   # Extract the data into an array
+   getValue <- function(node,Expression){
+      tryCatch(xmlValue(node[["Fields"]][[toupper(Expression)]]),
+               error= NULL
+         )
+   }
+
+   values <- sapply(xmlChildren(recordsXML),FUN=getValue, Expression)
+   symbols  <- sapply(xmlChildren(recordsXML),FUN=getValue, "SYMBOL")
+   #Merge error codes and return values
+   names(values) <- symbols
+   # Convert into numerics if available
+
+   dfValues <- as.data.frame(values)
+   
+   try.numeric <- function(x){
+      x1 <- tryCatch(as.numeric(x),warning = function(w) {return(NA)})
+      if(is.na(x1)){
+         return(x)
+      }else{
+         return(as.numeric(x))
+      }
+         
+   }
+
+   dfValues$values<- lapply(dfValues[,1],FUN=try.numeric)
+   
+   # Return the data
+   return(dfValues)
+}
+
+
+##############################################################################################
+#' @title make a timeSeries request for a list
 #'\code{timeSeriesListRequest} Function that returns a timeseries from Datastream constituent list
 #' parameters are 
 #'@param   dwei - A Datastream Client Interface object created with getDataStream
@@ -160,20 +261,24 @@ timeSeriesListRequest <- function (dwei=getDataStream(),
 
 
 ###############################################################################################
-#'\code{timeSeriesRequest} Function that returns a timeseries from Datastream
+#' @title make a timeseries request
+#' 
+#' @details \code{timeSeriesRequest} Function that obtains a timeseries from Datastream
 #' parameters are 
-#'@param    dwei - A Datastream Client Interface object created with getDataStream
-#'@param    DSCodes - one or more codes to return, eg "MKS" or c("MKS","SAB")
-#'@param    Instrument - the instrument or expression to return eg PCH#(XXXX,1M) 
-#'@param    startDate - the start date of the timeseries
-#'@param    endDate - the end date of the timeseries
-#'@param    frequency - the frequency of the request
-#'@param    verbose - whether to give messages during the request
+#' 
+#' @param    dwei - A Datastream Client Interface object created with getDataStream
+#' @param    DSCodes - one or more codes to return, eg "MKS" or c("MKS","SAB")
+#' @param    Instrument - the instrument or expression to return eg PCH#(XXXX,1M) 
+#' @param    startDate - the start date of the timeseries
+#' @param    endDate - the end date of the timeseries
+#' @param    frequency - the frequency of the request
+#' @param    verbose - whether to give messages during the request
 #'
 
-#'@return    whether the request has been successful
+#' @return    whether the request has been successful
 #'    in sStockList: a list a two element vector of the displayname and symbol for each timeseries
 #'    in aTimeseries: a list of class xts with the requested timeseries information
+#' @export
 timeSeriesRequest <- function (dwei=getDataStream(), 
                                DSCodes="",
                                Instrument="",
@@ -187,12 +292,7 @@ timeSeriesRequest <- function (dwei=getDataStream(),
    # Check the parameters are valid
    #   TODO: check if dwei is valid
    # if(class(dwei)=="SOAPClientInterface") { return(FALSE) }
-   
-   require(SSOAP,quietly=TRUE)
-   require(XMLSchema,quietly=TRUE)
-   require(XML,quietly=TRUE)
-   require(zoo,quietly=TRUE)
-   require(xts,quietly=TRUE)
+
    
    #Create the request objects
    ud <-new("UserData", Username = paste("DS:",dwei$User ,sep=""), Password = dwei$Pass)

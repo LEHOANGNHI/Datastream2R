@@ -1,3 +1,4 @@
+require(Datastream2R)
 #This file contains a list of test cases for the the Datastream2R package
 #At some point this code be put into the documentation
 #
@@ -36,6 +37,31 @@ b<-listRequest(dwei = dwei,
             Expression = "MNEM", 
             startDate = Sys.Date())
 print(b)
+
+
+# Test of staticRequest
+bsR<-staticRequest(dwei = dwei, 
+               DSCode = c("MKS","RIO"), 
+               Expression = "ICBSSN", 
+               endDate = Sys.Date(),
+               verbose=TRUE)
+print(bsR)
+
+# Test of staticRequest
+bsR<-staticRequest(dwei = dwei, 
+                   DSCode = c("MKS","RIO","ZPQ"), 
+                   Expression = "P", 
+                   endDate = Sys.Date(),
+                   verbose=TRUE)
+print(bsR)
+
+# Test of staticRequest
+bsR<-staticRequest(dwei = dwei, 
+                   DSCode = c("MKS","RIO","ZPQ"), 
+                   Expression = "QSA", 
+                   endDate = Sys.Date(),
+                   verbose=TRUE)
+print(bsR)
 
 timeSeriesListRequest(dwei = dwei, 
                            DSCode = "LFTSE100", 
