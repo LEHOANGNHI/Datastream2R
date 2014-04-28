@@ -33,3 +33,37 @@ sExpected <-  TRUE
 stopifnot(sPost == sExpected)
 
 message("Unit tests passed")
+
+
+# Test a dataset with an NaN in it
+
+testData <- xts(x=c(1, 2.2, 3.12345, 14.5, NaN), order.by = as.Date(c("2013-01-01","2013-02-01","2013-03-01","2013-04-01","2013-05-01")))
+
+sPost <- getTimeseries(testData,"M",2,"NA")
+
+sExpected <- "1.00,2.20,3.12,14.50,NA,"
+stopifnot(sPost == sExpected)
+
+
+#Try uploading a real dataset
+sPost <- UCTSUpload(TSCode="TSTEST01", 
+                    MGMTGroup="TEST", 
+                    freq = "M",
+                    seriesName="Automatic Upload Test",
+                    Units="par",
+                    Decimals=2,
+                    ActPer="Y",
+                    freqConversion="END",
+                    Alignment="MID",
+                    Carry="NO",
+                    PrimeCurr="U$",
+                    tsData=testData,
+                    strUsername=options()$Datastream.Username,
+                    strPassword=options()$Datastream.Password)
+
+
+sExpected <-  TRUE
+
+stopifnot(sPost == sExpected)
+
+message("Unit tests passed")

@@ -69,14 +69,16 @@ getTimeseries <- function(Data, freq, digits, NA_VALUE){
       #If we do not have a daily frequency then we can just load up the datapoints, with the implicit
       #assumption that they are in the right frequency
    }
-   sFormattedData <- format(wData,digits=0,nsmall=digits)
+   sFormattedData <- format(wData,digits=0,nsmall=digits,trim=TRUE)
    #We need to make sure that any missing data is replaced with the 
    # the correct symbol
-   
-   sFormattedData[which(is.na(sFormattedData))] <- NA_VALUE
+
+   #sFormattedData[which(is.na(sFormattedData))] <- NA_VALUE
+   sFormattedData[which(sFormattedData=="NaN")] <- NA_VALUE
    #Collapse the array into a string
-   sData<-paste0(format(sFormattedData,digits=0,nsmall=digits),collapse=",")     
+   sData<-paste0(sFormattedData,collapse=",")     
    sData<-paste0(sData,",")
+
    return(sData)
 }
 
