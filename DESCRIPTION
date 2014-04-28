@@ -1,7 +1,7 @@
 Package: Datastream2R
 Type: Package
 Title: Allows access to Datastream data from R
-Version: 2.1.0
+Version: 2.1.1
 Date: 2014-04-15
 Author: Charles Cara
 Maintainer: Charles Cara <charlesc@absolute-strategy.com>

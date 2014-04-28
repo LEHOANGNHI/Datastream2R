@@ -3,6 +3,8 @@ Datastream2R
 
 This is a series of functions for downloading data from the Thomson Reuters DataStream DWE server, which provides XML access to the Datstream database of economic and financial information.
 
+It also provides a function to upload a timeseries into a UCTS.
+
 
 Datastream is a paid-for service that provides financial and economic data.
 

@@ -211,6 +211,6 @@ UCTSUpload <- function(tsData,
       return(TRUE)
    }
    else{
-      return(reValue[1])
+      return(retValue[1])
    }
 }
