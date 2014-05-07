@@ -66,4 +66,51 @@ sExpected <-  TRUE
 
 stopifnot(sPost == sExpected)
 
+#Test the daily data
+
+#Load some test data
+load("Other\\f.RData")
+fTest<-head(f$First,10)
+
+# Test getTimeseries for the first 10 points
+tData <- getTimeseries(Data=fTest, freq="D", digits=4, NA_VALUE="NA")
+tDataExpected <- "0.8559,NA,NA,NA,0.8579,0.8512,0.8599,NA,NA,0.8596,NA,0.8393,0.8406,0.8274,0.8505,0.8444,"
+stopifnot(tData == tDataExpected)
+
+#Try a round trip and check if data is the same
+sPost <- UCTSUpload(TSCode="TSTEST01", 
+                    MGMTGroup="TEST", 
+                    freq = "D",
+                    seriesName="Automatic Upload Test",
+                    Units="",
+                    Decimals=3,
+                    ActPer="Y",
+                    freqConversion="END",
+                    Alignment="END",
+                    Carry="NO",
+                    PrimeCurr="",
+                    tsData=fTest,
+                    strUsername=options()$Datastream.Username,
+                    strPassword=options()$Datastream.Password)
+stopifnot(sPost == TRUE)  #Failed to upload
+
+#Now lets download the data
+dwei <- getDataStream(User=options()$Datastream.Username, Pass=options()$Datastream.Password)
+sGet <- timeSeriesRequest(dwei = dwei, 
+                          DSCodes = "TSTEST01", 
+                          Instrument = "",
+                          startDate = index(first(fTest)), 
+                          endDate = index(last(fTest)), 
+                          frequency = "D",
+                          sStockList = sTest, 
+                          aTimeSeries = aTS, 
+                          verbose = FALSE)
+
+#So success is aTS is the same as f$First
+
+xResult <- cbind(round(fTest,digits=3),aTS)  # Need to round to the same number of digits as in upload
+colnames(xResult) <- c("Sent","Got")
+stopifnot(!FALSE %in% as.vector(xResult$Sent==xResult$Got))
+
+
 message("Unit tests passed")

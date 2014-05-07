@@ -63,7 +63,8 @@ getTimeseries <- function(Data, freq, digits, NA_VALUE){
       
       
       # This only picks the weeksdays from the original series
-      wData <- Data[which(.indexwday(Data) %in% 1:5),1]
+      #wData <- Data[which(.indexwday(Data) %in% 1:5),1]
+      wData <- wData[which(.indexwday(wData) %in% 1:5),1]
    }else{
       wData <- Data
       #If we do not have a daily frequency then we can just load up the datapoints, with the implicit
