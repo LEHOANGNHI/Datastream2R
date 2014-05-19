@@ -1,4 +1,4 @@
-require(Datastream2R)
+source("R\\UCTSUpload.R")
 # Regression tests for th UCTSUpload routine
 #
 # Test the password encryption function which should return "134060072035020251227029" for "A1B2c3d5"

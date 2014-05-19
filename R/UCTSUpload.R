@@ -204,12 +204,18 @@ UCTSUpload <- function(tsData,
    
    
    # Now post the form
+   # We will give it three tries
+   iCounter <- 1
+   retValue <- ""
    
+   while(iCounter <3 && retValue != "*OK*"){
    retValue <- postForm(uri=dsURL, 
                         .params=dsParams,
                         style="POST",
                         .encoding="utf-8",
                         .contentEncodeFun=curlPercentEncode)
+   iCounter <- iCounter + 1 
+   }
    if(retValue[1]=="*OK*"){
       return(TRUE)
    }
